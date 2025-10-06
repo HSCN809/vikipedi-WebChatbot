@@ -7,12 +7,12 @@ Kullanıcılar, 3D görselli bir web arayüzü üzerinden Türkçe veya İngiliz
 
 ## 📋 Genel Özellikler
 
-* **Wikipedia entegrasyonu:** Doğrudan Vikipedi API’sinden özet, başlık ve tablo bilgilerini çeker (`services/search.py`).
-* **Matematik motoru:** Güvenli `numexpr` temelli hesaplama desteği içerir; kullanıcıdan gelen ifadeleri doğrular ve değerlendirir (`services/calculator.py`).
-* **Gerçek zamanlı yanıt akışı:** `Server-Sent Events (SSE)` ile model çıktısı parça parça kullanıcıya iletilir (`app.py`).
+* **Wikipedia entegrasyonu:** Doğrudan Vikipedi API’sinden özet, başlık ve tablo bilgilerini çeker.
+* **Matematik motoru:** Güvenli `numexpr` temelli hesaplama desteği içerir; kullanıcıdan gelen ifadeleri doğrular ve değerlendirir.
+* **Gerçek zamanlı yanıt akışı:** `Server-Sent Events (SSE)` ile model çıktısı parça parça kullanıcıya iletilir.
 * **Chat geçmişi yönetimi:** Her sohbet için ayrı kimlik (`chat_id`) ve bellek tutulur.
-* **Modern 3D arayüz:** HTML/CSS/JS ile geliştirilmiş interaktif ve animasyonlu tasarım (`templates/index.html`).
-* **Markdown çıktısı:** Model yanıtları başlıklar, listeler, kod blokları ve vurgu biçimleriyle biçimlendirilir (`chatbot.py`).
+* **Modern 3D arayüz:** HTML/CSS/JS ile geliştirilmiş interaktif ve animasyonlu tasarım.
+* **Markdown çıktısı:** Model yanıtları başlıklar, listeler, kod blokları ve vurgu biçimleriyle biçimlendirilir.
 
 ---
 
@@ -57,7 +57,7 @@ requests
 numexpr
 ```
 
-Ek olarak, `.env` dosyasında OpenAI anahtarınızı belirtin:
+Ek olarak, oluşturacağınız `.env` dosyasında OpenAI anahtarınızı belirtin:
 
 ```
 OPENAI_API_KEY=your_openai_api_key_here
