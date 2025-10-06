@@ -124,7 +124,7 @@ Tarayıcıda açarak etkileşimli arayüze ulaşabilirsiniz:
 | Katman      | Teknoloji                                       |
 | ----------- | ----------------------------------------------- |
 | Backend     | Flask, OpenAI API, Python                       |
-| NLP / Bilgi | Wikipedia-API                                   |
+| Bilgi       | Wikipedia-API                                   |
 | Hesaplama   | NumExpr                                         |
 | Frontend    | HTML5, CSS3 (3D animasyonlu arayüz), JavaScript |
 | Formatlama  | Markdown Rendering (Marked.js)                  |
