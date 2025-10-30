@@ -142,9 +142,9 @@ if __name__ == "__main__":
     print("🚀 Chatbot başlatılıyor...")
     print("🔗 http://127.0.0.1:5000 adresinde çalışacak")
 
-    # API key kontrolü
-    if not os.getenv("OPENAI_API_KEY"):
-        print("⚠️ OPENAI_API_KEY bulunamadı! .env dosyasını kontrol edin.")
+    # API key kontrolü - GEMINI için
+    if not os.getenv("GEMINI_API_KEY"):
+        print("⚠️ GEMINI_API_KEY bulunamadı! .env dosyasını kontrol edin.")
 
     # Flask uygulamasını başlat (debug mode açık, tüm IP'lerden erişilebilir)
     app.run(debug=True, host="0.0.0.0", port=5000)
