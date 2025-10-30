@@ -4,3 +4,4 @@ python-dotenv
 wikipedia-api
 requests
 numexpr
+google-generativeai
