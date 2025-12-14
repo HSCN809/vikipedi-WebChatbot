@@ -1,18 +1,19 @@
 # 🧠 Wikipedia Chatbot – AI Destekli Bilgi Asistanı
 
-Bu proje, **OpenAI GPT-4o-mini** modeliyle çalışan, **Flask** tabanlı bir web uygulamasıdır.
-Kullanıcılar, 3D görselli bir web arayüzü üzerinden Türkçe veya İngilizce olarak Vikipedi’den bilgi sorgulayabilir, matematiksel hesaplamalar yapabilir ve sonuçları gerçek zamanlı (streaming) olarak görebilir.
+Bu proje, **Google Gemini 2.5 Flash** modeliyle çalışan, **Flask** tabanlı bir web uygulamasıdır.
+Kullanıcılar, 3D görselli bir web arayüzü üzerinden Türkçe veya İngilizce olarak Vikipedi'den bilgi sorgulayabilir, matematiksel hesaplamalar yapabilir ve sonuçları gerçek zamanlı (streaming) olarak görebilir.
 
 ---
 
 ## 📋 Genel Özellikler
 
-* **Wikipedia entegrasyonu:** Doğrudan Vikipedi API’sinden özet, başlık ve tablo bilgilerini çeker.
+* **Wikipedia entegrasyonu:** Doğrudan Vikipedi API'sinden özet, başlık ve tablo bilgilerini çeker.
 * **Matematik motoru:** Güvenli `numexpr` temelli hesaplama desteği içerir; kullanıcıdan gelen ifadeleri doğrular ve değerlendirir.
 * **Gerçek zamanlı yanıt akışı:** `Server-Sent Events (SSE)` ile model çıktısı parça parça kullanıcıya iletilir.
 * **Chat geçmişi yönetimi:** Her sohbet için ayrı kimlik (`chat_id`) ve bellek tutulur.
 * **Modern 3D arayüz:** HTML/CSS/JS ile geliştirilmiş interaktif ve animasyonlu tasarım.
 * **Markdown çıktısı:** Model yanıtları başlıklar, listeler, kod blokları ve vurgu biçimleriyle biçimlendirilir.
+* **Function Calling:** Gemini'nin native function calling özelliği ile Wikipedia araması ve hesaplama.
 
 ---
 
@@ -21,19 +22,43 @@ Kullanıcılar, 3D görselli bir web arayüzü üzerinden Türkçe veya İngiliz
 ```
 VIKIPEDI-WEBCHATBOT/
 │
-├── services/            # Alt servisler (search, calculator)
-│   ├── search.py         # Wikipedia API entegrasyonu
-│   └── calculator.py     # Güvenli hesaplama fonksiyonları
+├── src/                     # Kaynak kod
+│   ├── app.py               # Flask sunucusu (SSE ve endpoint'ler)
+│   ├── chatbot.py           # Gemini tabanlı sohbet mantığı
+│   │
+│   ├── services/            # Alt servisler
+│   │   ├── __init__.py
+│   │   ├── wikipedia.py     # Wikipedia API entegrasyonu
+│   │   └── calculator.py    # Güvenli hesaplama fonksiyonları
+│   │
+│   ├── routes/              # API endpoint'leri
+│   │   ├── __init__.py
+│   │   └── chat_routes.py
+│   │
+│   └── config/              # Yapılandırma
+│       ├── __init__.py
+│       └── settings.py
 │
-├── templates/           # HTML şablonları
-│   └── index.html        # 3D web arayüzü (frontend)
+├── static/                  # Statik dosyalar
+│   ├── css/
+│   │   └── styles.css
+│   └── js/
+│       └── main.js
 │
-├── .gitattributes        # Git yapılandırması
-├── .gitignore            # Gereksiz dosyaların hariç tutulması
-├── app.py                # Flask sunucusu (SSE ve endpoint’ler)
-├── chatbot.py            # GPT-4o-mini tabanlı sohbet mantığı
-├── requirements.txt      # Bağımlılıklar
-└── README.md             # Bu doküman
+├── templates/               # HTML şablonları
+│   └── index.html           # 3D web arayüzü (frontend)
+│
+├── tests/                   # Test dosyaları
+│   ├── __init__.py
+│   ├── test_calculator.py
+│   └── test_wikipedia.py
+│
+├── .env.example             # Örnek ortam değişkenleri
+├── .gitattributes           # Git yapılandırması
+├── .gitignore               # Gereksiz dosyaların hariç tutulması
+├── requirements.txt         # Bağımlılıklar
+├── run.py                   # Uygulama başlatma noktası
+└── README.md                # Bu doküman
 ```
 
 ---
@@ -49,18 +74,26 @@ pip install -r requirements.txt
 `requirements.txt` içeriği:
 
 ```
-flask
-openai
-python-dotenv
-wikipedia-api
-requests
-numexpr
+# Web Framework
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# AI/LLM
+google-generativeai>=0.8.0
+
+# Wikipedia
+wikipedia-api>=0.6.0
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0
+numexpr>=2.8.0
 ```
 
-Ek olarak, oluşturacağınız `.env` dosyasında OpenAI anahtarınızı belirtin:
+Ek olarak, oluşturacağınız `.env` dosyasında Gemini API anahtarınızı belirtin:
 
 ```
-OPENAI_API_KEY=your_openai_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 ---
@@ -68,7 +101,13 @@ OPENAI_API_KEY=your_openai_api_key_here
 ## 🚀 Uygulamayı Çalıştırma
 
 ```bash
-python app.py
+python run.py
+```
+
+veya doğrudan:
+
+```bash
+python src/app.py
 ```
 
 Başlatıldığında terminalde:
@@ -89,24 +128,24 @@ Tarayıcıda açarak etkileşimli arayüze ulaşabilirsiniz:
 2. Sol panelden **Yeni Sohbet** oluşturun.
 3. Mesaj kutusuna bir konu yazın:
 
-   * “Atatürk hakkında bilgi ver.”
-   * “5*(12+3)^2 hesapla.”
+   * "Atatürk hakkında bilgi ver."
+   * "5*(12+3)^2 hesapla."
 4. Yanıtlar model tarafından Markdown biçiminde ve parça parça (streaming) olarak gösterilir.
-5. Sohbetler tarayıcı LocalStorage’da saklanır; sıfırlama veya silme işlemleri arayüzden yapılabilir.
+5. Sohbetler tarayıcı LocalStorage'da saklanır; sıfırlama veya silme işlemleri arayüzden yapılabilir.
 
 ---
 
 ## 🧠 Teknik Akış
 
-* **Frontend (`index.html`)** – Kullanıcı mesajlarını `/chat` endpoint’ine gönderir ve SSE ile stream’i okur.
-* **Backend (`app.py`)** – Flask, her sohbet için `WebChatbot` nesnesi oluşturur ve yanıt akışını yönetir.
-* **Chatbot Mantığı (`chatbot.py`)** –
+* **Frontend (`templates/index.html`)** – Kullanıcı mesajlarını `/chat` endpoint'ine gönderir ve SSE ile stream'i okur.
+* **Backend (`src/app.py`)** – Flask, her sohbet için `WebChatbot` nesnesi oluşturur ve yanıt akışını yönetir.
+* **Chatbot Mantığı (`src/chatbot.py`)** –
 
-  * OpenAI modeliyle konuşma geçmişini işler,
-  * Gerekirse `search_info()` veya `calculate()` fonksiyonlarını çağırır.
-* **services/search.py & services/calculator.py** –
+  * Gemini modeliyle konuşma geçmişini işler,
+  * Function calling ile `search_info()` veya `calculate()` fonksiyonlarını çağırır.
+* **services/wikipedia.py & services/calculator.py** –
 
-  * `search_info()` → Wikipedia’dan veri toplar,
+  * `search_info()` → Wikipedia'dan veri toplar,
   * `calculate()` → Güvenli matematik hesaplaması yapar.
 
 ---
@@ -114,8 +153,9 @@ Tarayıcıda açarak etkileşimli arayüze ulaşabilirsiniz:
 ## 🧩 Güvenlik & Sınırlamalar
 
 * `calculator.py` yalnızca sayısal karakterleri ve basit operatörleri kabul eder; aşırı uzun ifadeleri veya büyük üs değerlerini engeller.
-* `search.py`, yalnızca var olan Vikipedi sayfalarını döndürür ve gereksiz ağ isteklerini sınırlar.
+* `wikipedia.py`, yalnızca var olan Vikipedi sayfalarını döndürür ve gereksiz ağ isteklerini sınırlar.
 * API anahtarı `.env` dosyasında gizli tutulmalıdır.
+* Rate limiting ile API istekleri sınırlandırılmıştır.
 
 ---
 
@@ -123,8 +163,26 @@ Tarayıcıda açarak etkileşimli arayüze ulaşabilirsiniz:
 
 | Katman      | Teknoloji                                       |
 | ----------- | ----------------------------------------------- |
-| Backend     | Flask, OpenAI API, Python                       |
+| Backend     | Flask, Google Gemini API, Python                |
+| AI Model    | Gemini 2.5 Flash                                |
 | Bilgi       | Wikipedia-API                                   |
 | Hesaplama   | NumExpr                                         |
 | Frontend    | HTML5, CSS3 (3D animasyonlu arayüz), JavaScript |
 | Formatlama  | Markdown Rendering (Marked.js)                  |
+
+---
+
+## 🔧 Geliştirme
+
+### Test Çalıştırma
+
+```bash
+python -m pytest tests/ -v
+```
+
+### Kod Formatı
+
+```bash
+black src/
+flake8 src/
+```

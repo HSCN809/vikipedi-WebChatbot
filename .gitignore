@@ -15,6 +15,7 @@ env/
 *.env/
 env.bak/
 venv.bak/
+.env.example
 
 
 # Distribution / packaging

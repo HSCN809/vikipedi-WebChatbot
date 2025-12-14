@@ -1,7 +1,21 @@
-flask
-openai
-python-dotenv
-wikipedia-api
-requests
-numexpr
-google-generativeai
+# Web Framework
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# AI/LLM
+google-generativeai>=0.8.0
+
+# Wikipedia
+wikipedia-api>=0.6.0
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0
+numexpr>=2.8.0
+
+# Development (optional - uncomment if needed)
+# pytest>=7.0.0
+# pytest-cov>=4.0.0
+# black>=23.0.0
+# flake8>=6.0.0
+# mypy>=1.0.0
